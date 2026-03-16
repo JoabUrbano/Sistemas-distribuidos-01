@@ -41,11 +41,7 @@ public class UDPServer implements ServerContract {
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					ObjectOutputStream os = new ObjectOutputStream(outputStream);
 					os.writeObject(msg);
-					byte[] dataSend = outputStream.toByteArray();
-					InetAddress inetAddress = InetAddress.getByName("localhost");
-					DatagramPacket sendPacket = new DatagramPacket(
-								dataSend, dataSend.length,	inetAddress, 9004);
-					this.serverSocket.send(sendPacket);
+					sendMessage(msg);
 				} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				}
@@ -54,6 +50,21 @@ public class UDPServer implements ServerContract {
 		}catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("UDP Server Terminating");		
+		}
+	}
+
+	public void sendMessage(Message msg) {
+		try {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			ObjectOutputStream os = new ObjectOutputStream(outputStream);
+			os.writeObject(msg);
+			byte[] data = outputStream.toByteArray();
+			InetAddress inetAddress = InetAddress.getByName("localhost");
+			DatagramPacket sendPacket = new DatagramPacket(data, data.length, inetAddress, 9004);
+			this.serverSocket.send(sendPacket);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("UDP Server Terminating");
 		}
 	}
 }
