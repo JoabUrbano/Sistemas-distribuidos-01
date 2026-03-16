@@ -5,19 +5,29 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
 
 import imd.ufrn.ApiGateway.Comunicacao.Message;
 import imd.ufrn.ApiGateway.Comunicacao.ServerContract;
 
 public class UDPServer implements ServerContract {
+	private DatagramSocket serverSocket;
+
+	public UDPServer(String serverPort) {
+		try {
+			this.serverSocket = new DatagramSocket(Integer.parseInt(serverPort));
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void start() {
 		System.out.println("UDP Server Started");
 		try {
-			DatagramSocket serverSocket = new DatagramSocket(9003);
 			while (true) {
 				byte[] receiveMessage = new byte[1024];
 				DatagramPacket receivePacket = new DatagramPacket(receiveMessage, receiveMessage.length);
-				serverSocket.receive(receivePacket);
+				this.serverSocket.receive(receivePacket);
 								
 				byte[] data = receivePacket.getData();
 				ByteArrayInputStream in = new ByteArrayInputStream(data);
