@@ -9,7 +9,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Scanner;
 
 import imd.ufrn.ConputadorDeBordo.Informacoes.InformacoesInterface;
 import imd.ufrn.Shared.Message;
@@ -17,10 +16,12 @@ import imd.ufrn.Shared.Service;
 
 public class UDPInformacoes implements InformacoesInterface {
     private DatagramSocket serverSocket;
+    private String serverPort;
     
     public UDPInformacoes(String serverPort) {
         try {
             this.serverSocket = new DatagramSocket(Integer.parseInt(serverPort));
+            this.serverPort = serverPort;
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -54,12 +55,13 @@ public class UDPInformacoes implements InformacoesInterface {
     public void getVelocidade() {
         System.out.println("Velocidade: 100 km/h");
     }
+
     public void heartBeat() {
         System.out.println("Heart Beat: 100");
 		try {
 			DatagramSocket clientSocket = new DatagramSocket();
 			InetAddress inetAddress = InetAddress.getByName("localhost");
-			Service service = new Service("localhost", "9004");
+			Service service = new Service("localhost", serverPort);
 			Message msg = new Message(2,service.getUrl());
 			
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
