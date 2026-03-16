@@ -1,11 +1,17 @@
 package imd.ufrn.Shared;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 public class Service {
     private String name;
     private String port;
     private Timestamp ultimoHeartBeat;
+
+    public Service(String name, String port, Timestamp ultimoHeartBeat) {
+        this.name = name;
+        this.port = port;
+        this.ultimoHeartBeat = ultimoHeartBeat;
+    }
 
     public Service(String name, String port) {
         this.name = name;

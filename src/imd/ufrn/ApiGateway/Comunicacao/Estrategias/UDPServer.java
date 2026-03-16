@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.sql.Timestamp;
 
 import imd.ufrn.ApiGateway.Comunicacao.ServerContract;
 import imd.ufrn.Shared.Message;
@@ -44,7 +45,7 @@ public class UDPServer implements ServerContract {
 						sendMessage(msg);
 					} else if (msg.getType() == 2) {
 						String[] serviceSended = msg.getContent().split(":");
-						Service service = new Service(serviceSended[0], serviceSended[1]);
+						Service service = new Service(serviceSended[0], serviceSended[1], new Timestamp(System.currentTimeMillis()));
 						addService(service);
 					}
 				} catch (ClassNotFoundException e) {
@@ -77,6 +78,9 @@ public class UDPServer implements ServerContract {
 	
 		for (Service s : services) {
 			if (s.getName().equals(service.getName()) && s.getPort().equals(service.getPort())) {
+				s.setUltimoHeartBeat(new Timestamp(System.currentTimeMillis()));
+				System.out.println("Serviço: "+s.getUrl()+" atualizado");
+				System.out.println("Ultimo HeartBeat: "+s.getUltimoHeartBeat());
 				return;
 			}
 		}
