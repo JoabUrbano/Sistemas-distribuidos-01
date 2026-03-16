@@ -40,7 +40,13 @@ public class UDPServer implements ServerContract {
 				try {
 					Message msg = (Message) is.readObject();
 					System.out.println("Msg recebida com tipo de operação = "+msg.getType()+", e conteudo:"+msg.getContent());
-					sendMessage(msg);
+					if (msg.getType() == 1) {
+						sendMessage(msg);
+					} else if (msg.getType() == 2) {
+						String[] serviceSended = msg.getContent().split(":");
+						Service service = new Service(serviceSended[0], serviceSended[1]);
+						addService(service);
+					}
 				} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				}
@@ -65,5 +71,40 @@ public class UDPServer implements ServerContract {
 			e.printStackTrace();
 			System.out.println("UDP Server Terminating");
 		}
+	}
+
+	public void addService(Service service) {
+		if (services == null) {
+			services = new Service[] { service };
+			return;
+		}
+	
+		for (Service s : services) {
+			if (s.getName().equals(service.getName()) && s.getPort().equals(service.getPort())) {
+				return;
+			}
+		}
+	
+		Service[] newServices = new Service[services.length + 1];
+		for (int i = 0; i < services.length; i++) {
+			newServices[i] = services[i];
+		}
+		newServices[services.length] = service;
+		services = newServices;
+	}
+
+	public void removeService(Service service) {
+		Service[] newServices = new Service[services.length - 1];
+		for (int i = 0; i < services.length; i++) {
+			if (services[i].getName().equals(service.getName())) {
+				continue;
+			}
+			newServices[i] = services[i];
+		}
+		services = newServices;
+	}
+
+	public Service[] getServices() {
+		return services;
 	}
 }

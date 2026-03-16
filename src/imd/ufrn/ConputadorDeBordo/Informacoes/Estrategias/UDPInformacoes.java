@@ -1,14 +1,19 @@
 package imd.ufrn.ConputadorDeBordo.Informacoes.Estrategias;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Scanner;
 
 import imd.ufrn.ConputadorDeBordo.Informacoes.InformacoesInterface;
 import imd.ufrn.Shared.Message;
+import imd.ufrn.Shared.Service;
 
 public class UDPInformacoes implements InformacoesInterface {
     private DatagramSocket serverSocket;
@@ -51,5 +56,24 @@ public class UDPInformacoes implements InformacoesInterface {
     }
     public void heartBeat() {
         System.out.println("Heart Beat: 100");
+		try {
+			DatagramSocket clientSocket = new DatagramSocket();
+			InetAddress inetAddress = InetAddress.getByName("localhost");
+			Service service = new Service("localhost", "9004");
+			Message msg = new Message(2,service.getUrl());
+			
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			ObjectOutputStream os = new ObjectOutputStream(outputStream);
+			os.writeObject(msg);
+			byte[] data = outputStream.toByteArray();
+			DatagramPacket sendPacket = new DatagramPacket(
+						data, data.length,	inetAddress, 9003);
+			clientSocket.send(sendPacket);
+			System.out.println("UDP Client Terminating ");
+			clientSocket.close();	
+			
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} 
     }
 }
