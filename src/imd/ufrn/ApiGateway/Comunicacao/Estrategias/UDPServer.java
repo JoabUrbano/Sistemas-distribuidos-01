@@ -1,14 +1,17 @@
 package imd.ufrn.ApiGateway.Comunicacao.Estrategias;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
-import imd.ufrn.ApiGateway.Comunicacao.Message;
 import imd.ufrn.ApiGateway.Comunicacao.ServerContract;
+import imd.ufrn.Shared.Message;
 
 public class UDPServer implements ServerContract {
 	private DatagramSocket serverSocket;
@@ -35,10 +38,17 @@ public class UDPServer implements ServerContract {
 				try {
 					Message msg = (Message) is.readObject();
 					System.out.println("Msg recebida com tipo de operação = "+msg.getType()+", e conteudo:"+msg.getContent());
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					ObjectOutputStream os = new ObjectOutputStream(outputStream);
+					os.writeObject(msg);
+					byte[] dataSend = outputStream.toByteArray();
+					InetAddress inetAddress = InetAddress.getByName("localhost");
+					DatagramPacket sendPacket = new DatagramPacket(
+								dataSend, dataSend.length,	inetAddress, 9004);
+					this.serverSocket.send(sendPacket);
 				} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				}
-				
 				
 			}
 		}catch (IOException e) {

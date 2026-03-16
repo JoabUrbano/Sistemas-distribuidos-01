@@ -8,7 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Scanner;
 
-import imd.ufrn.ApiGateway.Comunicacao.Message;
+import imd.ufrn.Shared.Message;
 
 class UDPClientMsg {
 

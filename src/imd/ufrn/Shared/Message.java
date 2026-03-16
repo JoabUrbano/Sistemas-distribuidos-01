@@ -1,4 +1,4 @@
-package imd.ufrn.ApiGateway.Comunicacao;
+package imd.ufrn.Shared;
 
 import java.io.Serializable;
 
