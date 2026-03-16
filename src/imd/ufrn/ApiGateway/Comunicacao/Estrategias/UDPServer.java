@@ -12,9 +12,11 @@ import java.net.SocketException;
 
 import imd.ufrn.ApiGateway.Comunicacao.ServerContract;
 import imd.ufrn.Shared.Message;
+import imd.ufrn.Shared.Service;
 
 public class UDPServer implements ServerContract {
 	private DatagramSocket serverSocket;
+	private Service[] services;
 
 	public UDPServer(String serverPort) {
 		try {
@@ -38,9 +40,6 @@ public class UDPServer implements ServerContract {
 				try {
 					Message msg = (Message) is.readObject();
 					System.out.println("Msg recebida com tipo de operação = "+msg.getType()+", e conteudo:"+msg.getContent());
-					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-					ObjectOutputStream os = new ObjectOutputStream(outputStream);
-					os.writeObject(msg);
 					sendMessage(msg);
 				} catch (ClassNotFoundException e) {
 				e.printStackTrace();
