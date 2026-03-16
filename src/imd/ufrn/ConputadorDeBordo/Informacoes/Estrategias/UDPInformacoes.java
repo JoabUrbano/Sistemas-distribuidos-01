@@ -43,8 +43,6 @@ public class UDPInformacoes implements InformacoesInterface {
                 Message msg = (Message) is.readObject(); // msg.getValue()
                 if (msg.getType() == 1) {
                     getVelocidade();
-                } else if (msg.getType() == 2) {
-                    heartBeat();
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

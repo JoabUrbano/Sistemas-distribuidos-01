@@ -80,7 +80,8 @@ public class UDPServer implements ServerContract {
 				return;
 			}
 		}
-
+		System.out.println("Serviço: "+service.getUrl()+" adicionado");
+		
 		Service[] newServices = new Service[services.length + 1];
 		for (int i = 0; i < services.length; i++) {
 			newServices[i] = services[i];
