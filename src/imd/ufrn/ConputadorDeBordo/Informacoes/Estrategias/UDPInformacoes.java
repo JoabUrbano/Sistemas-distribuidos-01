@@ -28,6 +28,7 @@ public class UDPInformacoes implements InformacoesInterface {
     }
 
     public void start(){
+        startHeartBeat();
         System.out.println("UDP Informacoes Started");
         while (true) {
             try {
@@ -56,26 +57,32 @@ public class UDPInformacoes implements InformacoesInterface {
         System.out.println("Velocidade: 100 km/h");
     }
 
-    public void heartBeat() {
-        System.out.println("Heart Beat: 100");
-		try {
-			DatagramSocket clientSocket = new DatagramSocket();
-			InetAddress inetAddress = InetAddress.getByName("localhost");
-			Service service = new Service("localhost", serverPort);
-			Message msg = new Message(2,service.getUrl());
-			
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			ObjectOutputStream os = new ObjectOutputStream(outputStream);
-			os.writeObject(msg);
-			byte[] data = outputStream.toByteArray();
-			DatagramPacket sendPacket = new DatagramPacket(
-						data, data.length,	inetAddress, 9003);
-			clientSocket.send(sendPacket);
-			System.out.println("UDP Client Terminating ");
-			clientSocket.close();	
-			
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} 
+    public void startHeartBeat() {
+        new Thread(() -> {
+            try {
+                DatagramSocket clientSocket = new DatagramSocket();
+                InetAddress inetAddress = InetAddress.getByName("localhost");
+                Service service = new Service("localhost", serverPort);
+    
+                while (true) {
+                    Message msg = new Message(2, service.getUrl());
+    
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ObjectOutputStream os = new ObjectOutputStream(outputStream);
+                    os.writeObject(msg);
+                    byte[] data = outputStream.toByteArray();
+    
+                    DatagramPacket sendPacket = new DatagramPacket(
+                            data, data.length, inetAddress, 9003);
+    
+                    clientSocket.send(sendPacket);
+                    System.out.println("HeartBeat enviado: " + service.getUrl());
+    
+                    Thread.sleep(1000);
+                }
+            } catch (IOException | InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
     }
 }

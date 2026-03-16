@@ -16,7 +16,7 @@ import imd.ufrn.Shared.Service;
 
 public class UDPServer implements ServerContract {
 	private DatagramSocket serverSocket;
-	private Service[] services;
+	private Service[] services = new Service[0];
 
 	public UDPServer(String serverPort) {
 		try {
@@ -74,17 +74,13 @@ public class UDPServer implements ServerContract {
 	}
 
 	public void addService(Service service) {
-		if (services == null) {
-			services = new Service[] { service };
-			return;
-		}
 	
 		for (Service s : services) {
 			if (s.getName().equals(service.getName()) && s.getPort().equals(service.getPort())) {
 				return;
 			}
 		}
-	
+
 		Service[] newServices = new Service[services.length + 1];
 		for (int i = 0; i < services.length; i++) {
 			newServices[i] = services[i];
