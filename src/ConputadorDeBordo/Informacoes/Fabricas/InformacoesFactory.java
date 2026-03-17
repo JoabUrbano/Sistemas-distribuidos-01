@@ -1,5 +1,6 @@
-package ConputadorDeBordo.Informacoes;
+package ConputadorDeBordo.Informacoes.Fabricas;
 
+import ConputadorDeBordo.Informacoes.InformacoesInterface;
 import ConputadorDeBordo.Informacoes.Estrategias.UDPInformacoes;
 
 public class InformacoesFactory {

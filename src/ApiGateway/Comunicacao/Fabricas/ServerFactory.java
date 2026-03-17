@@ -1,5 +1,6 @@
-package ApiGateway.Comunicacao;
+package ApiGateway.Comunicacao.Fabricas;
 
+import ApiGateway.Comunicacao.ServerContract;
 import ApiGateway.Comunicacao.Estrategias.UDPServer;
 
 public class ServerFactory {

@@ -2,7 +2,7 @@ package ApiGateway;
 
 
 import ApiGateway.Comunicacao.ServerContract;
-import ApiGateway.Comunicacao.ServerFactory;
+import ApiGateway.Comunicacao.Fabricas.ServerFactory;
 
 public class main {
     public static void main(String[] args) { 
