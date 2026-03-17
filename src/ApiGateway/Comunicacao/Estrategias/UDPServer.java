@@ -11,11 +11,11 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.sql.Timestamp;
 
-import ApiGateway.Comunicacao.ServerContract;
+import ApiGateway.Comunicacao.Template.ServerTemplate;
 import Shared.Message;
 import Shared.Service;
 
-public class UDPServer implements ServerContract {
+public class UDPServer extends ServerTemplate {
 	private DatagramSocket serverSocket;
 	private Service[] services = new Service[0];
 
@@ -40,8 +40,9 @@ public class UDPServer implements ServerContract {
 				ObjectInputStream is = new ObjectInputStream(in);
 				try {
 					Message msg = (Message) is.readObject();
-					System.out.println("Msg recebida com tipo de operação = "+msg.getType()+", e conteudo:"+msg.getContent());
+					
 					if (msg.getType() == 1) {
+						System.out.println("Msg recebida com tipo de operação = "+msg.getType()+", e conteudo:"+msg.getContent());
 						sendMessage(msg);
 					} else if (msg.getType() == 2) {
 						String[] serviceSended = msg.getContent().split(":");
