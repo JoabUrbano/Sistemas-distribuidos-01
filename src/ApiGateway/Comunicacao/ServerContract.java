@@ -1,4 +1,4 @@
-package imd.ufrn.ApiGateway.Comunicacao;
+package ApiGateway.Comunicacao;
 
 public interface ServerContract {
     public void start();

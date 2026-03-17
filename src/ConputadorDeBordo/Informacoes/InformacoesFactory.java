@@ -1,6 +1,6 @@
-package imd.ufrn.ConputadorDeBordo.Informacoes;
+package ConputadorDeBordo.Informacoes;
 
-import imd.ufrn.ConputadorDeBordo.Informacoes.Estrategias.UDPInformacoes;
+import ConputadorDeBordo.Informacoes.Estrategias.UDPInformacoes;
 
 public class InformacoesFactory {
     public static InformacoesInterface createInformacoes() {

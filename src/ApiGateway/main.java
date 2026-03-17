@@ -1,8 +1,8 @@
-package imd.ufrn.ApiGateway;
+package ApiGateway;
 
 
-import imd.ufrn.ApiGateway.Comunicacao.ServerContract;
-import imd.ufrn.ApiGateway.Comunicacao.ServerFactory;
+import ApiGateway.Comunicacao.ServerContract;
+import ApiGateway.Comunicacao.ServerFactory;
 
 public class main {
     public static void main(String[] args) { 

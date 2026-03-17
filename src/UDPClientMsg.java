@@ -1,5 +1,3 @@
-package imd.ufrn;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -8,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Scanner;
 
-import imd.ufrn.Shared.Message;
+import Shared.Message;
 
 class UDPClientMsg {
 

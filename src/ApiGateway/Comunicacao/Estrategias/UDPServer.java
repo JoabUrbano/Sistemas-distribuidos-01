@@ -1,4 +1,4 @@
-package imd.ufrn.ApiGateway.Comunicacao.Estrategias;
+package ApiGateway.Comunicacao.Estrategias;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,9 +11,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.sql.Timestamp;
 
-import imd.ufrn.ApiGateway.Comunicacao.ServerContract;
-import imd.ufrn.Shared.Message;
-import imd.ufrn.Shared.Service;
+import ApiGateway.Comunicacao.ServerContract;
+import Shared.Message;
+import Shared.Service;
 
 public class UDPServer implements ServerContract {
 	private DatagramSocket serverSocket;

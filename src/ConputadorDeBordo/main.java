@@ -1,7 +1,7 @@
-package imd.ufrn.ConputadorDeBordo;
+package ConputadorDeBordo;
 
-import imd.ufrn.ConputadorDeBordo.Informacoes.InformacoesFactory;
-import imd.ufrn.ConputadorDeBordo.Informacoes.InformacoesInterface;
+import ConputadorDeBordo.Informacoes.InformacoesFactory;
+import ConputadorDeBordo.Informacoes.InformacoesInterface;
 
 public class main {
     public static void main(String[] args) { 

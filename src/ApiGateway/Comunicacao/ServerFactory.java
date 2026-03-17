@@ -1,6 +1,6 @@
-package imd.ufrn.ApiGateway.Comunicacao;
+package ApiGateway.Comunicacao;
 
-import imd.ufrn.ApiGateway.Comunicacao.Estrategias.UDPServer;
+import ApiGateway.Comunicacao.Estrategias.UDPServer;
 
 public class ServerFactory {
     public static ServerContract createServer(String serverType) {

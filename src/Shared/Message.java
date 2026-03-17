@@ -1,4 +1,4 @@
-package imd.ufrn.Shared;
+package Shared;
 
 import java.io.Serializable;
 

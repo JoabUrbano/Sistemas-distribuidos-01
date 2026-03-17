@@ -1,4 +1,4 @@
-package imd.ufrn.ConputadorDeBordo.Informacoes.Estrategias;
+package ConputadorDeBordo.Informacoes.Estrategias;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,9 +10,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import imd.ufrn.ConputadorDeBordo.Informacoes.InformacoesInterface;
-import imd.ufrn.Shared.Message;
-import imd.ufrn.Shared.Service;
+import ConputadorDeBordo.Informacoes.InformacoesInterface;
+import Shared.Message;
+import Shared.Service;
 
 public class UDPInformacoes implements InformacoesInterface {
     private DatagramSocket serverSocket;
