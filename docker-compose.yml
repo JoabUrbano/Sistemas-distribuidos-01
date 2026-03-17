@@ -1,0 +1,70 @@
+services:
+  apigateway:
+    build: .
+    container_name: apigateway
+    environment:
+      - GATEWAY_PORT=9003
+    ports:
+      - "9003:9003/udp"
+    networks:
+      - rede
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 3s
+      start_period: 12s
+      retries: 1
+
+  computador1:
+    build: .
+    container_name: computador1
+    environment:
+      - MODE=computador
+      - NODE_NAME=computador1
+      - LISTEN_PORT=9004
+      - GATEWAY_HOST=apigateway
+      - GATEWAY_PORT=9003
+    ports:
+      - "9004:9004/udp"
+    depends_on:
+      apigateway:
+        condition: service_healthy
+    networks:
+      - rede
+
+  computador2:
+    build: .
+    container_name: computador2
+    environment:
+      - MODE=computador
+      - NODE_NAME=computador2
+      - LISTEN_PORT=9005
+      - GATEWAY_HOST=apigateway
+      - GATEWAY_PORT=9003
+    ports:
+      - "9005:9005/udp"
+    depends_on:
+      apigateway:
+        condition: service_healthy
+    networks:
+      - rede
+
+  computador3:
+    build: .
+    container_name: computador3
+    environment:
+      - MODE=computador
+      - NODE_NAME=computador3
+      - LISTEN_PORT=9006
+      - GATEWAY_HOST=apigateway
+      - GATEWAY_PORT=9003
+    ports:
+      - "9006:9006/udp"
+    depends_on:
+      apigateway:
+        condition: service_healthy
+    networks:
+      - rede
+
+networks:
+  rede:
+    driver: bridge

@@ -62,12 +62,18 @@ public class UDPServer extends ServerTemplate {
 
 	public void sendMessage(Message msg) {
 		try {
+			Service[] svc = getServices();
+			if (svc == null || svc.length == 0) {
+				System.out.println("Nenhum computador de bordo registrado para encaminhar mensagem");
+				return;
+			}
+			Service target = svc[0];
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(outputStream);
 			os.writeObject(msg);
 			byte[] data = outputStream.toByteArray();
-			InetAddress inetAddress = InetAddress.getByName("localhost");
-			DatagramPacket sendPacket = new DatagramPacket(data, data.length, inetAddress, 9004);
+			InetAddress inetAddress = InetAddress.getByName(target.getName());
+			DatagramPacket sendPacket = new DatagramPacket(data, data.length, inetAddress, Integer.parseInt(target.getPort()));
 			this.serverSocket.send(sendPacket);
 		} catch (IOException e) {
 			e.printStackTrace();

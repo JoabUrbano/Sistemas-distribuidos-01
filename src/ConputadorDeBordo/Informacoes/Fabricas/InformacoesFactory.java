@@ -5,7 +5,9 @@ import ConputadorDeBordo.Informacoes.Estrategias.UDPInformacoes;
 
 public class InformacoesFactory {
     public static InformacoesInterface createInformacoes() {
-        UDPInformacoes udpInformacoes = new UDPInformacoes("9004");
+        String port = System.getenv("LISTEN_PORT");
+        if (port == null || port.isEmpty()) port = "9004";
+        UDPInformacoes udpInformacoes = new UDPInformacoes(port);
         return udpInformacoes;
     }
 }
