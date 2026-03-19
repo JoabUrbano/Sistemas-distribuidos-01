@@ -13,13 +13,13 @@ import Shared.Message;
 import Shared.Service;
 
 public class InformacoesTemplate implements InformacoesInterface{
-    private String serverPort;
+    private int serverPort;
 
     public void start(){
         System.out.println("InformacoesTemplate Started");
     }
 
-    public void setServerPort(String serverPort) {
+    public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
     }
 
@@ -38,7 +38,7 @@ public class InformacoesTemplate implements InformacoesInterface{
                 InetAddress inetAddress = resolveGatewayHost(gatewayHost, 15, 2000);
 
                 DatagramSocket clientSocket = new DatagramSocket();
-                Service service = new Service(nodeName, serverPort);
+                Service service = new Service(nodeName, String.valueOf(serverPort));
 
                 while (true) {
                     Message msg = new Message(2, service.getUrl());

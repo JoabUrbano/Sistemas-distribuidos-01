@@ -13,9 +13,9 @@ import Shared.Message;
 public class UDPInformacoes extends InformacoesTemplate {
     private DatagramSocket serverSocket;
     
-    public UDPInformacoes(String serverPort) {
+    public UDPInformacoes(int serverPort) {
         try {
-            this.serverSocket = new DatagramSocket(Integer.parseInt(serverPort));
+            this.serverSocket = new DatagramSocket(serverPort);
             super.setServerPort(serverPort);
         } catch (SocketException e) {
             e.printStackTrace();
