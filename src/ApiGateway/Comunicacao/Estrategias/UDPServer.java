@@ -17,8 +17,7 @@ import Shared.Service;
 
 public class UDPServer extends ServerTemplate {
 	private DatagramSocket serverSocket;
-	private Service[] services = new Service[0];
-
+	
 	public UDPServer(int serverPort) {
 		try {
 			this.serverSocket = new DatagramSocket(serverPort);
