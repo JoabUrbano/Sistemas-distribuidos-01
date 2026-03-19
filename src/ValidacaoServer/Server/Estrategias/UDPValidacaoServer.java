@@ -1,4 +1,4 @@
-package ValidacaoServer.Validacao.Estrategias;
+package ValidacaoServer.Server.Estrategias;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,12 +8,12 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 
 import Shared.Message;
-import ValidacaoServer.Validacao.Templates.InformacoesTemplate;
+import ValidacaoServer.Server.Templates.ValidacaoServerTemplate;
 
-public class UDPValidacao extends InformacoesTemplate {
+public class UDPValidacaoServer extends ValidacaoServerTemplate {
     private DatagramSocket serverSocket;
     
-    public UDPValidacao(int serverPort) {
+    public UDPValidacaoServer(int serverPort) {
         try {
             this.serverSocket = new DatagramSocket(serverPort);
             super.setServerPort(serverPort);
@@ -37,17 +37,13 @@ public class UDPValidacao extends InformacoesTemplate {
         
                 Message msg = (Message) is.readObject(); // msg.getValue()
                 if (msg.getType() == 1) {
-                    getVelocidade();
+                    System.out.println("Velocidade: " + 50);
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
             
-    }
-
-    public void getVelocidade() {
-        System.out.println("Velocidade: 100 km/h");
     }
 
 }

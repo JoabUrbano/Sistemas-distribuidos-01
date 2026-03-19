@@ -1,12 +1,12 @@
 package ValidacaoServer;
 
-import ValidacaoServer.Validacao.ValidacaoInterface;
-import ValidacaoServer.Validacao.Fabricas.ValidacaoFactory;
+import ValidacaoServer.Server.ValidacaoServerInterface;
+import ValidacaoServer.Server.Fabricas.ValidacaoServerFactory;
 
 public class main {
     public static void main(String[] args) { 
-        ValidacaoInterface validacao = ValidacaoFactory.createValidacao();
-        validacao.start();
+        ValidacaoServerInterface validacaoServer = ValidacaoServerFactory.createValidacaoServer();
+        validacaoServer.start();
     }
     
 }
