@@ -1,4 +1,4 @@
-package ConputadorDeBordo.Informacoes.Estrategias;
+package ValidacaoServer.Validacao.Estrategias;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,13 +7,13 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-import ConputadorDeBordo.Informacoes.Templates.InformacoesTemplate;
 import Shared.Message;
+import ValidacaoServer.Validacao.Templates.InformacoesTemplate;
 
-public class UDPInformacoes extends InformacoesTemplate {
+public class UDPValidacao extends InformacoesTemplate {
     private DatagramSocket serverSocket;
     
-    public UDPInformacoes(int serverPort) {
+    public UDPValidacao(int serverPort) {
         try {
             this.serverSocket = new DatagramSocket(serverPort);
             super.setServerPort(serverPort);

@@ -1,4 +1,4 @@
-package ConputadorDeBordo.Informacoes.Templates;
+package ValidacaoServer.Validacao.Templates;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,11 +8,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import ConputadorDeBordo.Informacoes.InformacoesInterface;
 import Shared.Message;
 import Shared.Service;
+import ValidacaoServer.Validacao.ValidacaoInterface;
 
-public class InformacoesTemplate implements InformacoesInterface{
+public class InformacoesTemplate implements ValidacaoInterface{
     private int serverPort;
 
     public void start(){
