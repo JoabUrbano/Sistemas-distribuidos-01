@@ -9,6 +9,7 @@ import java.net.SocketException;
 
 import Shared.Message;
 import ValidacaoServer.Server.Templates.ValidacaoServerTemplate;
+import ValidacaoServer.Validador.Implementacao.Validador;
 
 public class UDPValidacaoServer extends ValidacaoServerTemplate {
     private DatagramSocket serverSocket;
@@ -37,7 +38,13 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
         
                 Message msg = (Message) is.readObject(); // msg.getValue()
                 if (msg.getType() == 1) {
-                    System.out.println("Velocidade: " + 50);
+                    Validador validator = new Validador();
+                    boolean isValid = validator.validarVelocidade(Integer.parseInt(msg.getContent()));
+                    if (isValid) {
+                        System.out.println("Velocidade valida");
+                    } else {
+                        System.out.println("Velocidade invalida");
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

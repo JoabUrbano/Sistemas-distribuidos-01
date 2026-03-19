@@ -17,7 +17,7 @@ class UDPClientMsg {
 			DatagramSocket clientSocket = new DatagramSocket();
 			InetAddress inetAddress = InetAddress.getByName("localhost");
 			byte[] sendMessage;
-			Message msg = new Message(1,"teste de valor 1");
+			Message msg = new Message(1,"50");
 			
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(outputStream);
