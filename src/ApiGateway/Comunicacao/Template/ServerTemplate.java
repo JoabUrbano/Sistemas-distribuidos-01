@@ -18,8 +18,8 @@ public abstract class ServerTemplate implements ServerContract {
 		for (Service s : services) {
 			if (s.getName().equals(service.getName()) && s.getPort().equals(service.getPort())) {
 				s.setUltimoHeartBeat(new Timestamp(System.currentTimeMillis()));
-				System.out.println("Serviço: "+s.getUrl()+" atualizado");
-				System.out.println("Ultimo HeartBeat: "+s.getUltimoHeartBeat());
+				//System.out.println("Serviço: "+s.getUrl()+" atualizado");
+				//System.out.println("Ultimo HeartBeat: "+s.getUltimoHeartBeat());
 				return;
 			}
 		}

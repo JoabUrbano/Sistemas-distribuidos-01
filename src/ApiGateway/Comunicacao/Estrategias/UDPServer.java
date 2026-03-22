@@ -1,24 +1,27 @@
 package ApiGateway.Comunicacao.Estrategias;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ApiGateway.Comunicacao.Template.ServerTemplate;
-import Shared.Message;
-import Shared.Service;
 
 public class UDPServer extends ServerTemplate {
 	private DatagramSocket serverSocket;
-	
+	private static final int BACKEND_PORT = 9004;
+	private static final String BACKEND_HOST = "localhost";
+	private static final int BUFFER = 1024;
+	private static final int BACKEND_TIMEOUT_MS = 10_000;
+
 	public UDPServer(int serverPort) {
+		System.out.println("UDP Server");
 		try {
 			this.serverSocket = new DatagramSocket(serverPort);
 		} catch (SocketException e) {
@@ -26,32 +29,21 @@ public class UDPServer extends ServerTemplate {
 		}
 	}
 
+	private final ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor();
+
 	public void start() {
 		System.out.println("UDP Server Started");
 		try {
 			while (true) {
-				byte[] receiveMessage = new byte[1024];
-				DatagramPacket receivePacket = new DatagramPacket(receiveMessage, receiveMessage.length);
-				this.serverSocket.receive(receivePacket);
-								
-				byte[] data = receivePacket.getData();
-				ByteArrayInputStream in = new ByteArrayInputStream(data);
-				ObjectInputStream is = new ObjectInputStream(in);
-				try {
-					Message msg = (Message) is.readObject();
-					
-					if (msg.getType() == 1) {
-						System.out.println("Msg recebida com tipo de operação = "+msg.getType()+", e conteudo:"+msg.getContent());
-						sendMessage(msg);
-					} else if (msg.getType() == 2) {
-						String[] serviceSended = msg.getContent().split(":");
-						Service service = new Service(serviceSended[0], serviceSended[1], new Timestamp(System.currentTimeMillis()));
-						addService(service);
-					}
-				} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				}
-				
+				byte[] buf = new byte[BUFFER];
+				DatagramPacket clientPacket = new DatagramPacket(buf, buf.length);
+				serverSocket.receive(clientPacket);
+
+				String payload = new String(clientPacket.getData(), 0, clientPacket.getLength()).trim();
+				InetAddress clientAddr = clientPacket.getAddress();
+				int clientPort = clientPacket.getPort();
+
+				virtualThreads.submit(() -> encaminharEResponder(serverSocket, payload, clientAddr, clientPort));		
 			}
 		}catch (IOException e) {
 				e.printStackTrace();
@@ -59,24 +51,46 @@ public class UDPServer extends ServerTemplate {
 		}
 	}
 
-	public void sendMessage(Message msg) {
-		try {
-			Service[] svc = getServices();
-			if (svc == null || svc.length == 0) {
-				System.out.println("Nenhum computador de bordo registrado para encaminhar mensagem");
-				return;
+	private void encaminharEResponder(DatagramSocket gatewaySocket, String payload, InetAddress clientAddr, int clientPort) {
+		try (DatagramSocket upstream = new DatagramSocket()) {
+			upstream.setSoTimeout(BACKEND_TIMEOUT_MS);
+
+			InetAddress backend = InetAddress.getByName(BACKEND_HOST);
+			byte[] req = payload.getBytes();
+			DatagramPacket toBackend = new DatagramPacket(req, req.length, backend, BACKEND_PORT);
+			upstream.send(toBackend);
+
+			byte[] respBuf = new byte[BUFFER];
+			DatagramPacket fromBackend = new DatagramPacket(respBuf, respBuf.length);
+			upstream.receive(fromBackend);
+			System.out.println("Backend Reply: " + new String(fromBackend.getData(), 0, fromBackend.getLength()));
+
+			String backendReply = new String(fromBackend.getData(), 0, fromBackend.getLength());
+			byte[] toClient = backendReply.getBytes();
+			DatagramPacket clientReply = new DatagramPacket(toClient, toClient.length, clientAddr, clientPort);
+
+			synchronized (gatewaySocket) {
+				gatewaySocket.send(clientReply);
 			}
-			Service target = svc[0];
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			ObjectOutputStream os = new ObjectOutputStream(outputStream);
-			os.writeObject(msg);
-			byte[] data = outputStream.toByteArray();
-			InetAddress inetAddress = InetAddress.getByName(target.getName());
-			DatagramPacket sendPacket = new DatagramPacket(data, data.length, inetAddress, Integer.parseInt(target.getPort()));
-			this.serverSocket.send(sendPacket);
+
+		} catch (SocketTimeoutException e) {
+			enviarErro(gatewaySocket, clientAddr, clientPort, "Confirmo Recebimento de:erro;timeout_backend;9004");
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("UDP Server Terminating");
+			enviarErro(gatewaySocket, clientAddr, clientPort,
+					"Confirmo Recebimento de:erro;gateway;" + e.getMessage());
+		}
+	}
+
+		private void enviarErro(DatagramSocket gatewaySocket, InetAddress clientAddr, int clientPort, String msg) {
+		try {
+			byte[] b = msg.getBytes();
+			DatagramPacket p = new DatagramPacket(b, b.length, clientAddr, clientPort);
+			synchronized (gatewaySocket) {
+				gatewaySocket.send(p);
+			}
+			System.err.println("9003 erro para " + clientAddr + ":" + clientPort + " -> " + msg);
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 

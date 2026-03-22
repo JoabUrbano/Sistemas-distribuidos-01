@@ -7,7 +7,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import Shared.Message;
 import Shared.Service;
 import ValidacaoServer.Server.ValidacaoServerInterface;
 
@@ -34,18 +33,18 @@ public class ValidacaoServerTemplate implements ValidacaoServerInterface{
                 Service service = new Service("localhost", String.valueOf(serverPort));
 
                 while (true) {
-                    Message msg = new Message(2, service.getUrl());
+                    //Message msg = new Message(2, service.getUrl());
 
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     ObjectOutputStream os = new ObjectOutputStream(outputStream);
-                    os.writeObject(msg);
+                    //os.writeObject(msg);
                     byte[] data = outputStream.toByteArray();
 
                     DatagramPacket sendPacket = new DatagramPacket(
                             data, data.length, inetAddress, gatewayPort);
 
                     clientSocket.send(sendPacket);
-                    System.out.println("HeartBeat enviado: " + service.getUrl());
+                    //System.out.println("HeartBeat enviado: " + service.getUrl());
 
                     Thread.sleep(1000);
                 }

@@ -1,5 +1,5 @@
 package ValidacaoServer.Validador;
 
 public interface ValidadorContract {
-    public boolean validarVelocidade(int velocidade);
+    public String validar(int valor, int valorMinimo, int valorMaximo);
 }

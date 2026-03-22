@@ -1,21 +1,20 @@
 package ValidacaoServer.Server.Estrategias;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-import Shared.Message;
 import ValidacaoServer.Server.Templates.ValidacaoServerTemplate;
 import ValidacaoServer.Validador.Implementacao.Validador;
 
 public class UDPValidacaoServer extends ValidacaoServerTemplate {
     private DatagramSocket serverSocket;
+    private static final int BUFFER = 1024;
+	private Validador validador = new Validador();
     
     public UDPValidacaoServer(int serverPort) {
-        try {
+		try {
             this.serverSocket = new DatagramSocket(serverPort);
             super.setServerPort(serverPort);
         } catch (SocketException e) {
@@ -24,33 +23,43 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
     }
 
     public void start(){
-        startHeartBeat();
+        //startHeartBeat();
         System.out.println("UDP Informacoes Started");
-        while (true) {
-            try {
-                byte[] receiveMessage = new byte[1024];
-                DatagramPacket receivePacket = new DatagramPacket(receiveMessage, receiveMessage.length);
-                this.serverSocket.receive(receivePacket);
-        
-                byte[] data = receivePacket.getData();
-                ByteArrayInputStream in = new ByteArrayInputStream(data);
-                ObjectInputStream is = new ObjectInputStream(in);
-        
-                Message msg = (Message) is.readObject(); // msg.getValue()
-                if (msg.getType() == 1) {
-                    Validador validator = new Validador();
-                    boolean isValid = validator.validarVelocidade(Integer.parseInt(msg.getContent()));
-                    if (isValid) {
-                        System.out.println("Velocidade valida");
-                    } else {
-                        System.out.println("Velocidade invalida");
-                    }
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+        try {
+			while (true) {
+				byte[] buf = new byte[BUFFER];
+				DatagramPacket in = new DatagramPacket(buf, buf.length);
+				serverSocket.receive(in);
+				String raw = new String(in.getData(), 0, in.getLength()).trim();
+				
+                String reply = processar(raw);
+				byte[] out = reply.getBytes();
+				DatagramPacket resp = new DatagramPacket(out, out.length, in.getAddress(), in.getPort());
+				serverSocket.send(resp);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
             
     }
+
+    private String processar(String message) {
+		String resultadoOp = message;
+		try {
+			String[] p = message.split(";", 3);
+			if (p.length < 3) {
+				return "Confirmo Recebimento de:erro;formato_invalido;esperado operacao;conta;valor";
+			}
+			int valor = Integer.parseInt(p[0].trim());
+			int valorMinimo = Integer.parseInt(p[1].trim());
+			int valorMaximo = Integer.parseInt(p[2].trim());
+
+            resultadoOp = validador.validar(valor, valorMinimo, valorMaximo);
+
+			return "Confirmo Recebimento de:" + resultadoOp;
+		} catch (NumberFormatException nfe) {
+			return "Um erro ocorreu durante a operação";
+		}
+	}
 
 }
