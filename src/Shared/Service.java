@@ -6,16 +6,19 @@ public class Service {
     private String name;
     private String port;
     private Timestamp ultimoHeartBeat;
+    private String type;
 
-    public Service(String name, String port, Timestamp ultimoHeartBeat) {
+    public Service(String name, String port, String type, Timestamp ultimoHeartBeat) {
         this.name = name;
         this.port = port;
+        this.type = type;
         this.ultimoHeartBeat = ultimoHeartBeat;
     }
 
-    public Service(String name, String port) {
+    public Service(String name, String port, String type) {
         this.name = name;
         this.port = port;
+        this.type = type;
     }
 
     public String getName() {

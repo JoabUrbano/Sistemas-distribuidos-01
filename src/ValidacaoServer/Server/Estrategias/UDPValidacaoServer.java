@@ -79,10 +79,10 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
                 InetAddress inetAddress = InetAddress.getByName(gatewayHost);
 
                 try (DatagramSocket clientSocket = new DatagramSocket()) {
-                    Service service = new Service("localhost", String.valueOf(serverPort));
+                    Service service = new Service("localhost", String.valueOf(serverPort), "Validacao");
 
                     while (true) {
-                        String msg = ("Quack;" + service.getName() + ";" + service.getPort());
+                        String msg = ("Quack;" + "Validacao" + ";" + service.getUrl());
                         byte[] data = msg.getBytes(StandardCharsets.UTF_8);
 
                         DatagramPacket sendPacket = new DatagramPacket(

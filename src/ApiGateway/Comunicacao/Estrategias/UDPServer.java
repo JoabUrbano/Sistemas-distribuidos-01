@@ -19,7 +19,6 @@ public class UDPServer extends ServerTemplate {
 	private static final int BACKEND_PORT = 9004;
 	private static final String BACKEND_HOST = "localhost";
 	private static final int BUFFER = 1024;
-	private static final int BACKEND_TIMEOUT_MS = 10_000;
 
 	public UDPServer(int serverPort) {
 		System.out.println("UDP Server");
@@ -45,13 +44,6 @@ public class UDPServer extends ServerTemplate {
 				int clientPort = clientPacket.getPort();
 				System.out.println("Payload: " + payload);
 
-				String[] p = payload.split(";", 3);
-				String valor = p[0].trim();
-				if(valor.equals("Quack")) {
-					Service service = new Service(p[1], p[2], new Timestamp(System.currentTimeMillis()));
-					addService(service);
-					continue;
-				}
 				virtualThreads.submit(() -> encaminharEResponder(serverSocket, payload, clientAddr, clientPort));		
 			}
 		}catch (IOException e) {
@@ -62,7 +54,16 @@ public class UDPServer extends ServerTemplate {
 
 	private void encaminharEResponder(DatagramSocket gatewaySocket, String payload, InetAddress clientAddr, int clientPort) {
 		try (DatagramSocket upstream = new DatagramSocket()) {
-			upstream.setSoTimeout(BACKEND_TIMEOUT_MS);
+			upstream.setSoTimeout(10_000);
+
+			String[] p = payload.split(";", 3);
+			String valor = p[0].trim();
+			if(valor.equals("Quack")) {
+				String[] url = p[2].split(":", 2);
+				Service service = new Service(url[0], url[1], p[1], new Timestamp(System.currentTimeMillis()));
+				addService(service);
+				return;
+			}
 
 			InetAddress backend = InetAddress.getByName(BACKEND_HOST);
 			byte[] req = payload.getBytes();
