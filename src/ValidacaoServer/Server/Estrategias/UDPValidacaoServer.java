@@ -89,7 +89,6 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
                                 data, data.length, inetAddress, gatewayPort);
 
                         clientSocket.send(sendPacket);
-                        System.out.println("HeartBeat enviado: " + service.getUrl());
 
                         Thread.sleep(1000);
                     }

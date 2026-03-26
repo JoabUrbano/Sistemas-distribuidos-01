@@ -15,8 +15,6 @@ import Shared.Service;
 
 public class UDPServer extends ServerTemplate {
 	private DatagramSocket serverSocket;
-	private static final int BACKEND_PORT = 9004;
-	private static final String BACKEND_HOST = "localhost";
 	private static final int BUFFER = 1024;
 
 	public UDPServer(int serverPort) {
@@ -54,7 +52,7 @@ public class UDPServer extends ServerTemplate {
 
 	private void encaminharEResponder(DatagramSocket gatewaySocket, String payload, InetAddress clientAddr, int clientPort) {
 		try (DatagramSocket upstream = new DatagramSocket()) {
-			upstream.setSoTimeout(10_000);
+			upstream.setSoTimeout(100);
 
 			String[] p = payload.split(";", 3);
 			String valor = p[0].trim();
@@ -70,15 +68,16 @@ public class UDPServer extends ServerTemplate {
 
 				return;
 			}
-			InetAddress service = InetAddress.getByName(BACKEND_HOST);
+			Service serviceValidacao = this.getRandomServiceValidacao();
+
+			InetAddress service = InetAddress.getByName(serviceValidacao.getName());
 			byte[] req = payload.getBytes();
-			DatagramPacket toBackend = new DatagramPacket(req, req.length, service, BACKEND_PORT);
+			DatagramPacket toBackend = new DatagramPacket(req, req.length, service, Integer.parseInt(serviceValidacao.getPort()));
 			upstream.send(toBackend);
 
 			byte[] respBuf = new byte[BUFFER];
 			DatagramPacket fromBackend = new DatagramPacket(respBuf, respBuf.length);
 			upstream.receive(fromBackend);
-			System.out.println("Backend Reply: " + new String(fromBackend.getData(), 0, fromBackend.getLength()));
 
 			String backendReply = new String(fromBackend.getData(), 0, fromBackend.getLength());
 			byte[] toClient = backendReply.getBytes();
@@ -103,7 +102,6 @@ public class UDPServer extends ServerTemplate {
 			synchronized (gatewaySocket) {
 				gatewaySocket.send(p);
 			}
-			System.err.println("9003 erro para " + clientAddr + ":" + clientPort + " -> " + msg);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

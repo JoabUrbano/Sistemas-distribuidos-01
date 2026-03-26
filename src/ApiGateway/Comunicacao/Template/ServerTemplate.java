@@ -3,6 +3,7 @@ package ApiGateway.Comunicacao.Template;
 import Shared.Service;
 import java.sql.Timestamp;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import ApiGateway.Comunicacao.ServerContract;
 
@@ -20,7 +21,6 @@ public abstract class ServerTemplate implements ServerContract {
 				s.getPort().equals(service.getPort())) {
 	
 				s.setUltimoHeartBeat(new Timestamp(System.currentTimeMillis()));
-				System.out.println("Serviço: " + s.getUrl() + " atualizado " + s.getType());
 				return;
 			}
 		}
@@ -35,7 +35,6 @@ public abstract class ServerTemplate implements ServerContract {
 				s.getPort().equals(service.getPort())) {
 	
 				s.setUltimoHeartBeat(new Timestamp(System.currentTimeMillis()));
-				System.out.println("Serviço: " + s.getUrl() + " atualizado " + s.getType());
 				return;
 			}
 		}
@@ -87,5 +86,19 @@ public abstract class ServerTemplate implements ServerContract {
 
 	public CopyOnWriteArrayList<Service> getServicesSensoriamento() {
 		return servicesSensoriamento;
+	}
+
+	public Service getRandomServiceValidacao() {
+		if (servicesValidacao.isEmpty()) return null;
+
+		int index = ThreadLocalRandom.current().nextInt(servicesValidacao.size());
+		return servicesValidacao.get(index);
+	}
+
+	public Service getRandomServiceSensoriamento() {
+		if (servicesSensoriamento.isEmpty()) return null;
+
+		int index = ThreadLocalRandom.current().nextInt(servicesSensoriamento.size());
+		return servicesSensoriamento.get(index);
 	}
 }

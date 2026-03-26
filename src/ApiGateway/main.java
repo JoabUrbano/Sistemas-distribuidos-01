@@ -1,6 +1,5 @@
 package ApiGateway;
 
-
 import ApiGateway.Comunicacao.ServerContract;
 import ApiGateway.Comunicacao.Fabricas.ServerFactory;
 
