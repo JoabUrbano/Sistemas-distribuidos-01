@@ -33,6 +33,10 @@ public class Service {
         return name + ":" + port;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public Timestamp getUltimoHeartBeat() {
         return ultimoHeartBeat;
     }

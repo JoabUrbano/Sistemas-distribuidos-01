@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,6 +31,7 @@ public class UDPServer extends ServerTemplate {
 	private final ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor();
 
 	public void start() {
+		clearServices();
 		System.out.println("UDP Server Started");
 		try {
 			while (true) {
@@ -42,7 +42,7 @@ public class UDPServer extends ServerTemplate {
 				String payload = new String(clientPacket.getData(), 0, clientPacket.getLength()).trim();
 				InetAddress clientAddr = clientPacket.getAddress();
 				int clientPort = clientPacket.getPort();
-				System.out.println("Payload: " + payload);
+				// System.out.println("Payload: " + payload);
 
 				virtualThreads.submit(() -> encaminharEResponder(serverSocket, payload, clientAddr, clientPort));		
 			}
@@ -61,7 +61,13 @@ public class UDPServer extends ServerTemplate {
 			if(valor.equals("Quack")) {
 				String[] url = p[2].split(":", 2);
 				Service service = new Service(url[0], url[1], p[1], new Timestamp(System.currentTimeMillis()));
-				addService(service);
+				
+				if(p[1].equals("Validacao")) {
+					addServiceValidacao(service);
+				} else if(p[1].equals("Sensoriamento")) {
+					addServiceSensoriamento(service);
+				}
+
 				return;
 			}
 
