@@ -23,8 +23,8 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
     }
 
     public void start(){
-        //startHeartBeat();
-        System.out.println("UDP Informacoes Started");
+        startHeartBeat();
+        System.out.println("UDP Validacao Server Started");
         try {
 			while (true) {
 				byte[] buf = new byte[BUFFER];

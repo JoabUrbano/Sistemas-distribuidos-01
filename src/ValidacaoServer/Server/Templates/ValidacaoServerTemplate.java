@@ -1,11 +1,10 @@
 package ValidacaoServer.Server.Templates;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 
 import Shared.Service;
 import ValidacaoServer.Server.ValidacaoServerInterface;
@@ -29,24 +28,21 @@ public class ValidacaoServerTemplate implements ValidacaoServerInterface{
 
                 InetAddress inetAddress = InetAddress.getByName(gatewayHost);
 
-                DatagramSocket clientSocket = new DatagramSocket();
-                Service service = new Service("localhost", String.valueOf(serverPort));
+                try (DatagramSocket clientSocket = new DatagramSocket()) {
+                    Service service = new Service("localhost", String.valueOf(serverPort));
 
-                while (true) {
-                    //Message msg = new Message(2, service.getUrl());
+                    while (true) {
+                        String msg = ("Quack;" + service.getName() + ";" + service.getPort());
+                        byte[] data = msg.getBytes(StandardCharsets.UTF_8);
 
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    ObjectOutputStream os = new ObjectOutputStream(outputStream);
-                    //os.writeObject(msg);
-                    byte[] data = outputStream.toByteArray();
+                        DatagramPacket sendPacket = new DatagramPacket(
+                                data, data.length, inetAddress, gatewayPort);
 
-                    DatagramPacket sendPacket = new DatagramPacket(
-                            data, data.length, inetAddress, gatewayPort);
+                        clientSocket.send(sendPacket);
+                        System.out.println("HeartBeat enviado: " + service.getUrl());
 
-                    clientSocket.send(sendPacket);
-                    //System.out.println("HeartBeat enviado: " + service.getUrl());
-
-                    Thread.sleep(1000);
+                        Thread.sleep(1000);
+                    }
                 }
             } catch (IOException | InterruptedException ex) {
                 throw new RuntimeException(ex);

@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ApiGateway.Comunicacao.Template.ServerTemplate;
+import Shared.Service;
 
 public class UDPServer extends ServerTemplate {
 	private DatagramSocket serverSocket;
@@ -42,7 +43,15 @@ public class UDPServer extends ServerTemplate {
 				String payload = new String(clientPacket.getData(), 0, clientPacket.getLength()).trim();
 				InetAddress clientAddr = clientPacket.getAddress();
 				int clientPort = clientPacket.getPort();
+				System.out.println("Payload: " + payload);
 
+				String[] p = payload.split(";", 3);
+				String valor = p[0].trim();
+				if(valor.equals("Quack")) {
+					Service service = new Service(p[1], p[2], new Timestamp(System.currentTimeMillis()));
+					addService(service);
+					continue;
+				}
 				virtualThreads.submit(() -> encaminharEResponder(serverSocket, payload, clientAddr, clientPort));		
 			}
 		}catch (IOException e) {
