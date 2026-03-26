@@ -70,10 +70,9 @@ public class UDPServer extends ServerTemplate {
 
 				return;
 			}
-
-			InetAddress backend = InetAddress.getByName(BACKEND_HOST);
+			InetAddress service = InetAddress.getByName(BACKEND_HOST);
 			byte[] req = payload.getBytes();
-			DatagramPacket toBackend = new DatagramPacket(req, req.length, backend, BACKEND_PORT);
+			DatagramPacket toBackend = new DatagramPacket(req, req.length, service, BACKEND_PORT);
 			upstream.send(toBackend);
 
 			byte[] respBuf = new byte[BUFFER];
