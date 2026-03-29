@@ -1,7 +1,11 @@
 package Sensoriamento;
 
+import Sensoriamento.Server.SensoriamentoContrato;
+import Sensoriamento.Server.Fabricas.SensoriamentoServer;
+
 public class main {
     public static void main(String[] args) {
-        System.out.println("Sensoriamento");
+        SensoriamentoContrato sensoriamentoServer = SensoriamentoServer.createSensoriamentoServer();
+        sensoriamentoServer.start();
     }
 }
