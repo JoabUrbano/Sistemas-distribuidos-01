@@ -68,7 +68,12 @@ public class UDPServer extends ServerTemplate {
 
 				return;
 			}
+			
 			Service serviceValidacao = this.getRandomServiceValidacao();
+			if (serviceValidacao == null) {
+				enviarErro(gatewaySocket, clientAddr, clientPort, "Erro: Nenhum serviço de validação disponível");
+				return;
+			}
 
 			InetAddress service = InetAddress.getByName(serviceValidacao.getName());
 			byte[] req = payload.getBytes();
