@@ -52,7 +52,7 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
 		try {
 			String[] p = message.split(";", 3);
 			if (p.length < 3) {
-				return "Confirmo Recebimento de:erro;formato_invalido;esperado operacao;conta;valor";
+				return "Confirmo Recebimento de:erro;formato_invalido;esperado";
 			}
 			int valor = Integer.parseInt(p[0].trim());
 			int valorMinimo = Integer.parseInt(p[1].trim());

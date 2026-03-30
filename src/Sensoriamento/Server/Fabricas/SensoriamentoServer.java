@@ -5,6 +5,6 @@ import Sensoriamento.Server.Estrategias.UDPSensoriamentoServer;
 
 public class SensoriamentoServer {
     public static SensoriamentoContrato createSensoriamentoServer() {
-        return new UDPSensoriamentoServer();
+        return new UDPSensoriamentoServer(9010);
     }
 }

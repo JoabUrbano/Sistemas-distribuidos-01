@@ -74,11 +74,20 @@ public class UDPServer extends ServerTemplate {
 				enviarErro(gatewaySocket, clientAddr, clientPort, "Erro: Nenhum serviço de validação disponível");
 				return;
 			}
+			Service serviceSensoriamento = this.getRandomServiceSensoriamento();
+			if (serviceSensoriamento == null) {
+				enviarErro(gatewaySocket, clientAddr, clientPort, "Erro: Nenhum serviço de sensoriamento disponível");
+				return;
+			}
 
-			InetAddress service = InetAddress.getByName(serviceValidacao.getName());
 			byte[] req = payload.getBytes();
-			DatagramPacket toBackend = new DatagramPacket(req, req.length, service, Integer.parseInt(serviceValidacao.getPort()));
-			upstream.send(toBackend);
+			InetAddress serviceValidacaoAddress = InetAddress.getByName(serviceValidacao.getName());
+			DatagramPacket toBackendValidacao = new DatagramPacket(req, req.length, serviceValidacaoAddress, Integer.parseInt(serviceValidacao.getPort()));
+			
+			InetAddress serviceSensoriamentoAddress = InetAddress.getByName(serviceSensoriamento.getName());
+			DatagramPacket toBackendSensoriamento = new DatagramPacket(req, req.length, serviceSensoriamentoAddress, Integer.parseInt(serviceSensoriamento.getPort()));
+
+			upstream.send(toBackendValidacao);
 
 			byte[] respBuf = new byte[BUFFER];
 			DatagramPacket fromBackend = new DatagramPacket(respBuf, respBuf.length);
