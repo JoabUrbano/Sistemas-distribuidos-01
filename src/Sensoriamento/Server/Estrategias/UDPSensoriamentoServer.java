@@ -60,7 +60,9 @@ public class UDPSensoriamentoServer implements SensoriamentoContrato {
             if(operacao.equals("temperatura")) {
                 resultadoOp = String.valueOf(sensoriamento.geTemperatura());
             }
-
+            else if(operacao.equals("velocidade")) {
+                resultadoOp = String.valueOf(sensoriamento.getVelocidade());
+            }
 			return "Confirmo Recebimento de:" + resultadoOp;
 		} catch (NumberFormatException nfe) {
 			return "Um erro ocorreu durante a operação";
