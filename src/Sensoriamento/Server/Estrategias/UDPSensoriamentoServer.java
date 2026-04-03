@@ -6,6 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import Sensoriamento.Sensoriamento.Sensoriamento;
 import Sensoriamento.Server.SensoriamentoContrato;
@@ -17,7 +19,8 @@ public class UDPSensoriamentoServer implements SensoriamentoContrato {
 	private DatagramSocket serverSocket;
     private static final int BUFFER = 1024;
 	private Sensoriamento sensoriamento = new Sensoriamento();
-    
+	private final ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor();
+
     public UDPSensoriamentoServer(int serverPort) {
 		try {
             this.serverSocket = new DatagramSocket(serverPort);
@@ -36,11 +39,10 @@ public class UDPSensoriamentoServer implements SensoriamentoContrato {
 				DatagramPacket in = new DatagramPacket(buf, buf.length);
 				serverSocket.receive(in);
 				String raw = new String(in.getData(), 0, in.getLength()).trim();
-				
-                String reply = processar(raw);
-				byte[] out = reply.getBytes();
-				DatagramPacket resp = new DatagramPacket(out, out.length, in.getAddress(), in.getPort());
-				serverSocket.send(resp);
+				InetAddress clientAddr = in.getAddress();
+				int clientPort = in.getPort();
+
+				virtualThreads.submit(() -> responder(clientAddr, clientPort, raw));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,12 +50,26 @@ public class UDPSensoriamentoServer implements SensoriamentoContrato {
             
     }
 
+	private void responder(InetAddress clientAddr, int clientPort, String raw) {
+		try {
+			String reply = processar(raw);
+			byte[] out = reply.getBytes();
+			DatagramPacket resp = new DatagramPacket(out, out.length, clientAddr, clientPort);
+			synchronized (serverSocket) {
+				serverSocket.send(resp);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
     private String processar(String message) {
 		String resultadoOp = message;
 		try {
+            System.out.println("Sensoriamento Request: " + message);
 			String[] p = message.split(";", 3);
 			if (p.length < 3) {
-				return "Confirmo Recebimento de:erro;formato_invalido;esperado";
+				return "erro;formato_invalido;esperado";
 			}
 			String operacao = p[0].trim();
 
@@ -63,7 +79,7 @@ public class UDPSensoriamentoServer implements SensoriamentoContrato {
             else if(operacao.equals("velocidade")) {
                 resultadoOp = String.valueOf(sensoriamento.getVelocidade());
             }
-			return "Confirmo Recebimento de:" + resultadoOp;
+			return resultadoOp + ";" + p[1].trim() + ";" + p[2].trim();
 		} catch (NumberFormatException nfe) {
 			return "Um erro ocorreu durante a operação";
 		}

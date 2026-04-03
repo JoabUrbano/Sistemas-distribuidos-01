@@ -40,7 +40,6 @@ public class UDPServer extends ServerTemplate {
 				String payload = new String(clientPacket.getData(), 0, clientPacket.getLength()).trim();
 				InetAddress clientAddr = clientPacket.getAddress();
 				int clientPort = clientPacket.getPort();
-				// System.out.println("Payload: " + payload);
 
 				virtualThreads.submit(() -> encaminharEResponder(serverSocket, payload, clientAddr, clientPort));		
 			}
@@ -82,15 +81,34 @@ public class UDPServer extends ServerTemplate {
 			upstream.send(toBackendSensoriamento);
 
 			byte[] respBuf = new byte[BUFFER];
-			DatagramPacket fromBackend = new DatagramPacket(respBuf, respBuf.length);
-			upstream.receive(fromBackend);
+			DatagramPacket fromSensoriamento = new DatagramPacket(respBuf, respBuf.length);
+			upstream.receive(fromSensoriamento);
 
-			String backendReply = new String(fromBackend.getData(), 0, fromBackend.getLength());
-			byte[] toClient = backendReply.getBytes();
-			DatagramPacket clientReply = new DatagramPacket(toClient, toClient.length, clientAddr, clientPort);
+			String sensoriamentoReply = new String(
+					fromSensoriamento.getData(), 0, fromSensoriamento.getLength());
+			
+			Service serviceValidacao = this.getRandomServiceValidacao();
+			if (serviceValidacao == null) {
+				enviarErro(gatewaySocket, clientAddr, clientPort, "Erro: Nenhum serviço de validação disponível");
+				return;
+			}
+			
+			byte[] reqValidacao = sensoriamentoReply.getBytes();
+			InetAddress serviceValidacaoAddress = InetAddress.getByName(serviceValidacao.getName());
+			DatagramPacket toBackendValidacao = new DatagramPacket(reqValidacao, reqValidacao.length, serviceValidacaoAddress, Integer.parseInt(serviceValidacao.getPort()));
+
+			upstream.send(toBackendValidacao);
+
+			byte[] respBufValidacao = new byte[BUFFER];
+			DatagramPacket fromValidacao = new DatagramPacket(respBufValidacao, respBufValidacao.length);
+			upstream.receive(fromValidacao);
+
+			int respostaLen = fromValidacao.getLength();
+			DatagramPacket paraCliente = new DatagramPacket(
+					respBufValidacao, 0, respostaLen, clientAddr, clientPort);
 
 			synchronized (gatewaySocket) {
-				gatewaySocket.send(clientReply);
+				gatewaySocket.send(paraCliente);
 			}
 
 		} catch (SocketTimeoutException e) {

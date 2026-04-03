@@ -50,6 +50,7 @@ public class UDPValidacaoServer extends ValidacaoServerTemplate {
     private String processar(String message) {
 		String resultadoOp = message;
 		try {
+            System.out.println("Validacao Request: " + message);
 			String[] p = message.split(";", 3);
 			if (p.length < 3) {
 				return "Confirmo Recebimento de:erro;formato_invalido;esperado";
