@@ -51,7 +51,7 @@ public class UDPServer extends ServerTemplate {
 
 	private void encaminharEResponder(DatagramSocket gatewaySocket, String payload, InetAddress clientAddr, int clientPort) {
 		try (DatagramSocket upstream = new DatagramSocket()) {
-			upstream.setSoTimeout(100);
+			upstream.setSoTimeout(200);
 
 			String[] p = payload.split(";", 3);
 			String valor = p[0].trim();

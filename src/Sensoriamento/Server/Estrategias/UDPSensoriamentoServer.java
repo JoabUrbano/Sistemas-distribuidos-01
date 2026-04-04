@@ -66,7 +66,6 @@ public class UDPSensoriamentoServer implements SensoriamentoContrato {
     private String processar(String message) {
 		String resultadoOp = message;
 		try {
-            System.out.println("Sensoriamento Request: " + message);
 			String[] p = message.split(";", 3);
 			if (p.length < 3) {
 				return "erro;formato_invalido;esperado";
