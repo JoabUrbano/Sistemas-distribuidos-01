@@ -8,10 +8,10 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import Shared.Service;
-import ValidacaoServer.Server.Templates.ValidacaoServerTemplate;
+import ValidacaoServer.Server.ValidacaoServerInterface;
 import ValidacaoServer.Validador.Implementacao.Validador;
 
-public class UDPValidacaoServer extends ValidacaoServerTemplate {
+public class UDPValidacaoServer implements ValidacaoServerInterface {
 	private int serverPort;
 	private DatagramSocket serverSocket;
     private static final int BUFFER = 1024;

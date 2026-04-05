@@ -8,11 +8,11 @@ import java.util.concurrent.Executors;
 
 import Shared.HttpMinimalParser;
 import Shared.Service;
-import ValidacaoServer.Server.Templates.ValidacaoServerTemplate;
+import ValidacaoServer.Server.ValidacaoServerInterface;
 import ValidacaoServer.Validador.Implementacao.Validador;
 import ValidacaoServer.Validador.ValidacaoResult;
 
-public class TCPValidacaoServer extends ValidacaoServerTemplate {
+public class TCPValidacaoServer implements ValidacaoServerInterface {
 
     private int serverPort;
     private ServerSocket serverSocket;
