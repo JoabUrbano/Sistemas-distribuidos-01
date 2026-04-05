@@ -1,17 +1,23 @@
 package ValidacaoServer.Validador.Implementacao;
 
+import ValidacaoServer.Validador.ValidacaoResult;
 import ValidacaoServer.Validador.ValidadorContract;
 
 public class Validador implements ValidadorContract {
-    public String validar(int valor, int valorMinimo, int valorMaximo) {
+
+    @Override
+    public ValidacaoResult validarComResultado(int valor, int valorMinimo, int valorMaximo) {
         if (valor < valorMinimo) {
-            return "Valor abaixo do minimo esperado";
+            return new ValidacaoResult(false, "Valor abaixo do minimo esperado");
         }
-        else if (valor > valorMaximo) {
-            return "Valor acima do maximo esperado";
+        if (valor > valorMaximo) {
+            return new ValidacaoResult(false, "Valor acima do maximo esperado");
         }
-        else {
-            return "Valor dentro do esperado";
-        }
+        return new ValidacaoResult(true, "Valor dentro do esperado");
+    }
+
+    @Override
+    public String validar(int valor, int valorMinimo, int valorMaximo) {
+        return validarComResultado(valor, valorMinimo, valorMaximo).mensagem();
     }
 }

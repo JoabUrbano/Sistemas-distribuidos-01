@@ -1,5 +1,7 @@
 package ValidacaoServer.Validador;
 
 public interface ValidadorContract {
-    public String validar(int valor, int valorMinimo, int valorMaximo);
+    String validar(int valor, int valorMinimo, int valorMaximo);
+
+    ValidacaoResult validarComResultado(int valor, int valorMinimo, int valorMaximo);
 }
