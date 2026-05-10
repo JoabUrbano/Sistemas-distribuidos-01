@@ -1,2 +1,14 @@
 /out
 /ProjetoHTTP
+
+# Maven
+**/target/
+
+# IDE / ambientes locais
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+*.swp
+*~
